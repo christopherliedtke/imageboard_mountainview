@@ -1,10 +1,48 @@
 <!doctype html>
 <html>
 <head>
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>ImageBoard</title>
 </head>
 <body>
+    <header></header>
+
+    <main>
+
+        <div class="head">
+            <h1>MOUNTAINview</h1>
+        </div>
+    
+        <div id="main">
+
+            <div class="container" v-if="images.length > 0">
+                <div v-for="image in images" class="card">
+                    <div class="img">
+                        <img :src="image.url" alt="">
+                    </div>
+                    <div class="image-text">
+                        <div class="title">
+                            <h3>{{image.title}}</h3>
+                        </div>
+                        <div class="description">
+                            <p>{{image.description}}</p>
+                        </div>
+                        <div class="user">
+                            <span>{{image.username}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+    </main>
+
+    <footer></footer>
+
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
+    <script src="/js/script.js"></script>
 </body>
 </html>
