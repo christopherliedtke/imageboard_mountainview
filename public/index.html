@@ -3,10 +3,16 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
-    <title>ImageBoard</title>
+    <!-- Font Awesome -->
+        <script src="https://kit.fontawesome.com/359e13dbb2.js" crossorigin="anonymous"></script>
+    <title>MOUNTAINview &ndash; Awesome mountains all over</title>
+    <link rel="shortcut icon" href="mountain_64.png" type="image/x-icon">
 </head>
 <body>
-    <header></header>
+    <header>
+        <img src="mountain_64.png" height="25px" alt="">
+        <span>MOUNTAINview</span>
+    </header>
 
     <main>
 
@@ -16,10 +22,25 @@
     
         <div id="main">
 
+            <div class="upload">
+                <form>
+                    <input v-model='title' type="text" name="title" placeholder="title">
+                    <input v-model='description' type="text" name="description" placeholder="description">
+                    <input v-model='username' type="text" name="username" placeholder="username">
+                    <input class="inputfile" @change='handleChange' type="file" name="file" id="file" accept="image/*">
+                    <label id="file-label" for="file">Choose file</label>
+
+                    <button @click='handleClick'>Submit <i id="button-spinner" style="margin-left: 5px;" class="fas fa-spinner fa-spin hide"></i></button>
+                </form>
+            </div>
+
             <div class="container" v-if="images.length > 0">
                 <div v-for="image in images" class="card">
                     <div class="img">
                         <img :src="image.url" alt="">
+                        <div class="user">
+                            <span>{{image.username}}</span>
+                        </div>
                     </div>
                     <div class="image-text">
                         <div class="title">
@@ -27,9 +48,6 @@
                         </div>
                         <div class="description">
                             <p>{{image.description}}</p>
-                        </div>
-                        <div class="user">
-                            <span>{{image.username}}</span>
                         </div>
                     </div>
                 </div>

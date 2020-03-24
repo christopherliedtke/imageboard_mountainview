@@ -12,7 +12,19 @@ module.exports.getImages = () => {
     const q = `
         SELECT *
         FROM images
+        ORDER BY created_at DESC
     `;
 
     return db.query(q);
+};
+
+module.exports.addImage = (title, description, username, url) => {
+    const q = `
+        INSERT INTO images (title, username, description, url)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+    `;
+    const params = [title, description, username, url];
+
+    return db.query(q, params);
 };
