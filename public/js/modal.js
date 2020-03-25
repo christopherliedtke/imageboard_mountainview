@@ -7,7 +7,8 @@ Vue.component('image-modal', {
             description: '',
             username: '',
             url: '',
-            timeStamp: ''
+            timeStamp: '',
+            newComment: {}
         };
     },
     mounted: function() {
@@ -16,7 +17,6 @@ Vue.component('image-modal', {
         axios
             .get('/image?id=' + self.id)
             .then(function(payload) {
-                console.log('payload: ', payload);
                 self.title = payload.data.title;
                 self.description = payload.data.description;
                 self.username = payload.data.username;
@@ -30,6 +30,9 @@ Vue.component('image-modal', {
     methods: {
         closeModal: function() {
             this.$emit('close');
+        },
+        addComment: function(commentObj) {
+            this.newComment = commentObj;
         }
     }
 });

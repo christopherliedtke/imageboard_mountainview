@@ -18,13 +18,13 @@ module.exports.getImages = () => {
     return db.query(q);
 };
 
-module.exports.getImage = id => {
+module.exports.getImage = imageId => {
     const q = `
         SELECT *
         FROM images
         WHERE id=$1
     `;
-    const params = [id];
+    const params = [imageId];
 
     return db.query(q, params);
 };
@@ -36,6 +36,28 @@ module.exports.addImage = (title, description, username, url) => {
         RETURNING *
     `;
     const params = [title, description, username, url];
+
+    return db.query(q, params);
+};
+
+module.exports.getComments = imageId => {
+    const q = `
+        SELECT *
+        FROM comments
+        WHERE image_id=$1
+    `;
+    const params = [imageId];
+
+    return db.query(q, params);
+};
+
+module.exports.addComment = (comment, username, imageId) => {
+    const q = `
+        INSERT INTO comments (comment, username, image_id)
+        VALUES ($1, $2, $3)
+        RETURNING *
+    `;
+    const params = [comment, username, imageId];
 
     return db.query(q, params);
 };

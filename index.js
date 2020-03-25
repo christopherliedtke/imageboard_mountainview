@@ -48,20 +48,46 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
             res.json(response.rows[0]);
         })
         .catch(err => {
-            console.log(err);
+            console.log('Error on addImage() on /upload: ', err);
             res.sendStatus(500);
         });
 });
 
 app.get('/image', (req, res) => {
-    console.log('req.query: ', req.query);
+    const id = req.query.id;
 
-    db.getImage(req.query.id)
+    db.getImage(id)
         .then(payload => {
             res.json(payload.rows[0]);
         })
         .catch(err => {
-            console.log(err);
+            console.log('Error on getImage() on /image: ', err);
+            res.sendStatus(500);
+        });
+});
+
+app.get('/comments', (req, res) => {
+    const id = req.query.id;
+
+    db.getComments(id)
+        .then(payload => {
+            res.json(payload.rows);
+        })
+        .catch(err => {
+            console.log('Error on getComments() on /image: ', err);
+            res.sendStatus(500);
+        });
+});
+
+app.post('/addComment', (req, res) => {
+    console.log('req.body in /addComment: ', req.body);
+
+    db.addComment(req.body.comment, req.body.username, req.body.id)
+        .then(response => {
+            res.json(response.rows[0]);
+        })
+        .catch(err => {
+            console.log('Error on addComment() on /addComment: ', err);
             res.sendStatus(500);
         });
 });

@@ -58,6 +58,7 @@
                 :id="currentImageId"
                 v-if="currentImageId"
                 @close="closeModal"
+                
             ></image-modal>
             
         </div>
@@ -76,17 +77,50 @@
                     <img :src="url" alt="">
                 </div>
                 <div class="txtModal">
-                    <h3>{{title}} <span>| Uploaded by {{username}} on {{timeStamp}}</span></h3>
+                    <div class="meta">| Uploaded by {{username}} on {{timeStamp}}</div>
+                    <h3>{{title}} </h3>
                     <p>{{description}}</p>
                 </div>
 
+                <new-comment-modal
+                    :id="id"
+                    @submit="addComment"
+                ></new-comment-modal>
+
+                <comments-modal
+                    :id="id"
+                    :newComment="newComment"
+                    
+                ></comments-modal>
+
             </div>
+        </div>
+    </script>
+
+    <script id="comments" type="text/x-template">
+        <div class="comments">
+            <div v-for="comment in comments" class="comment-container">
+                <div class="comment">{{comment.comment}}</div>
+                <div class="meta">By {{comment.username}} on {{comment['created_at']}}</div>
+            </div>
+        </div>
+    </script>
+
+    <script id="new-comment" type="text/x-template">
+        <div class="new-comment">
+            <form>
+                <input v-model='comment' type="text" name="comment" placeholder="comment">
+                <input v-model='username' type="text" name="username" placeholder="username">
+                <button @click='submit'>Submit</button>
+            </form>
         </div>
     </script>
 
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
     <script src="/js/modal.js"></script>
+    <script src="/js/comments.js"></script>
+    <script src="/js/newComment.js"></script>
     <script src="/js/script.js"></script>
 </body>
 </html>
