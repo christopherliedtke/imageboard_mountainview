@@ -29,6 +29,8 @@ const uploader = multer({
     }
 });
 
+app.use(express.json());
+
 app.use(express.static('./public'));
 
 app.get('/images', (req, res) => {
@@ -40,11 +42,23 @@ app.get('/images', (req, res) => {
 });
 
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
-    // insert to db
     let url = conf.s3Url + req.file.filename;
     db.addImage(req.body.title, req.body.username, req.body.description, url)
         .then(response => {
             res.json(response.rows[0]);
+        })
+        .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+        });
+});
+
+app.get('/image', (req, res) => {
+    console.log('req.query: ', req.query);
+
+    db.getImage(req.query.id)
+        .then(payload => {
+            res.json(payload.rows[0]);
         })
         .catch(err => {
             console.log(err);

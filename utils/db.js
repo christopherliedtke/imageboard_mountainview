@@ -18,6 +18,17 @@ module.exports.getImages = () => {
     return db.query(q);
 };
 
+module.exports.getImage = id => {
+    const q = `
+        SELECT *
+        FROM images
+        WHERE id=$1
+    `;
+    const params = [id];
+
+    return db.query(q, params);
+};
+
 module.exports.addImage = (title, description, username, url) => {
     const q = `
         INSERT INTO images (title, username, description, url)

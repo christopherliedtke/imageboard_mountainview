@@ -37,7 +37,7 @@
             <div class="container" v-if="images.length > 0">
                 <div v-for="image in images" class="card">
                     <div class="img">
-                        <img :src="image.url" alt="">
+                        <img @click="openModal(image.id)" :src="image.url" alt="">
                         <div class="user">
                             <span>{{image.username}}</span>
                         </div>
@@ -50,8 +50,15 @@
                             <p>{{image.description}}</p>
                         </div>
                     </div>
+
                 </div>
             </div>
+            
+            <image-modal 
+                :id="currentImageId"
+                v-if="currentImageId"
+                @close="closeModal"
+            ></image-modal>
             
         </div>
 
@@ -59,8 +66,27 @@
 
     <footer></footer>
 
+    <script id="modal" type="text/x-template">
+        <div class="modal">
+            <div class="modal-content">
+                <div @click='closeModal' class="close">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="imgModal">
+                    <img :src="url" alt="">
+                </div>
+                <div class="txtModal">
+                    <h3>{{title}} <span>| Uploaded by {{username}} on {{timeStamp}}</span></h3>
+                    <p>{{description}}</p>
+                </div>
+
+            </div>
+        </div>
+    </script>
+
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
+    <script src="/js/modal.js"></script>
     <script src="/js/script.js"></script>
 </body>
 </html>

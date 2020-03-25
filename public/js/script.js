@@ -6,7 +6,8 @@
             title: '',
             description: '',
             username: '',
-            file: null
+            file: null,
+            currentImageId: null
         },
         mounted: function() {
             var self = this;
@@ -69,6 +70,12 @@
                     fileLabel.classList.remove('uploaded');
                     fileLabel.innerHTML = 'Choose file';
                 }
+            },
+            openModal: function(imageId) {
+                this.currentImageId = imageId;
+            },
+            closeModal: function() {
+                this.currentImageId = null;
             }
         }
     });

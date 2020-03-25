@@ -35,7 +35,6 @@ module.exports.upload = function(req, res, next) {
 
     promise
         .then(() => {
-            // delete from uploads folder
             fs.unlink(path, () => {});
             next();
         })
