@@ -80,8 +80,6 @@ app.get('/comments', (req, res) => {
 });
 
 app.post('/addComment', (req, res) => {
-    console.log('req.body in /addComment: ', req.body);
-
     db.addComment(req.body.comment, req.body.username, req.body.id)
         .then(response => {
             res.json(response.rows[0]);

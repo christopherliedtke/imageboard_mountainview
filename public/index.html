@@ -98,7 +98,8 @@
     </script>
 
     <script id="comments" type="text/x-template">
-        <div class="comments">
+        <div class="comments-container">
+            <h3>COMMENTS</h3>
             <div v-for="comment in comments" class="comment-container">
                 <div class="comment">{{comment.comment}}</div>
                 <div class="meta">By {{comment.username}} on {{comment['created_at']}}</div>
