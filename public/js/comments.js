@@ -7,19 +7,7 @@ Vue.component('comments-modal', {
         };
     },
     mounted: function() {
-        var self = this;
-        axios
-            .get('/comments?id=' + self.id)
-            .then(function(payload) {
-                self.comments = payload.data;
-
-                for (var i = 0, arrLength = self.comments.length; i < arrLength; i++) {
-                    self.comments[i]['created_at'] = self.comments[i]['created_at'].replace(/[a-zA-Z]/g, ' ').substring(0, 16);
-                }
-            })
-            .catch(function(err) {
-                console.log('Error in GET to /comments: ', err);
-            });
+        this.getComments();
     },
     watch: {
         newComment: function(newVal, oldVal) {
@@ -28,7 +16,26 @@ Vue.component('comments-modal', {
                     this.comments.push(this.newComment);
                 }
             }
+        },
+        id: function() {
+            this.getComments();
         }
     },
-    methods: {}
+    methods: {
+        getComments: function() {
+            var self = this;
+            axios
+                .get('/comments?id=' + self.id)
+                .then(function(payload) {
+                    self.comments = payload.data;
+
+                    for (var i = 0, arrLength = self.comments.length; i < arrLength; i++) {
+                        self.comments[i]['created_at'] = self.comments[i]['created_at'].replace(/[a-zA-Z]/g, ' ').substring(0, 16);
+                    }
+                })
+                .catch(function(err) {
+                    console.log('Error in GET to /comments: ', err);
+                });
+        }
+    }
 });

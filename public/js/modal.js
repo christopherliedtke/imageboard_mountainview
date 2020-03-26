@@ -8,24 +8,19 @@ Vue.component('image-modal', {
             username: '',
             url: '',
             timeStamp: '',
+            tags: null,
+            prevId: null,
+            nextId: null,
             newComment: {}
         };
     },
     mounted: function() {
-        var self = this;
-
-        axios
-            .get('/image?id=' + self.id)
-            .then(function(payload) {
-                self.title = payload.data.title;
-                self.description = payload.data.description;
-                self.username = payload.data.username;
-                self.url = payload.data.url;
-                self.timeStamp = payload.data['created_at'].replace(/[a-zA-Z]/g, ' ').substring(0, 16);
-            })
-            .catch(function(err) {
-                console.log('Error in GET to /image: ', err);
-            });
+        this.getImage();
+    },
+    watch: {
+        id: function() {
+            this.getImage();
+        }
     },
     methods: {
         closeModal: function() {
@@ -33,6 +28,71 @@ Vue.component('image-modal', {
         },
         addComment: function(commentObj) {
             this.newComment = commentObj;
+        },
+        getImage: function() {
+            var self = this;
+
+            Promise.all([
+                axios
+                    .get('/image?id=' + self.id)
+                    .then(function(payload) {
+                        if (!payload.data) {
+                            self.$emit('close');
+                        } else {
+                            self.title = payload.data.title;
+                            self.description = payload.data.description;
+                            self.username = payload.data.username;
+                            self.url = payload.data.url;
+                            self.timeStamp = payload.data['created_at'].replace(/[a-zA-Z]/g, ' ').substring(0, 16);
+
+                            self.prevId = payload.data.prevId;
+                            self.nextId = payload.data.nextId;
+                        }
+                    })
+                    .catch(function(err) {
+                        self.$emit('close');
+                        console.log('Error in GET to /image: ', err);
+                    }),
+                axios
+                    .get('/tags', {
+                        params: {
+                            imageId: self.id
+                        }
+                    })
+                    .then(function(payload) {
+                        self.tags = payload.data;
+                    })
+                    .catch(function(err) {
+                        console.log('Error in GET to /tags: ', err);
+                    })
+            ]);
+
+            axios
+                .get('/image?id=' + self.id)
+                .then(function(payload) {
+                    if (!payload.data) {
+                        self.$emit('close');
+                    } else {
+                        self.title = payload.data.title;
+                        self.description = payload.data.description;
+                        self.username = payload.data.username;
+                        self.url = payload.data.url;
+                        self.timeStamp = payload.data['created_at'].replace(/[a-zA-Z]/g, ' ').substring(0, 16);
+
+                        self.prevId = payload.data.prevId;
+                        self.nextId = payload.data.nextId;
+                    }
+                })
+                .catch(function(err) {
+                    self.$emit('close');
+                    console.log('Error in GET to /image: ', err);
+                });
+        },
+        nextImage: function() {
+            this.$emit('next', this.nextId);
+        },
+        prevImage: function() {
+            this.$emit('prev', this.prevId);
         }
     }
 });

@@ -27,6 +27,7 @@
                     <input v-model='title' type="text" name="title" placeholder="title">
                     <input v-model='description' type="text" name="description" placeholder="description">
                     <input v-model='username' type="text" name="username" placeholder="username">
+                    <input v-model='tags' type="text" name="tags" placeholder="tags">
                     <input class="inputfile" @change='handleChange' type="file" name="file" id="file" accept="image/*">
                     <label id="file-label" for="file">Choose file</label>
 
@@ -37,10 +38,12 @@
             <div class="container" v-if="images.length > 0">
                 <div v-for="image in images" class="card">
                     <div class="img">
-                        <img @click="openModal(image.id)" :src="image.url" alt="">
-                        <div class="user">
-                            <span>{{image.username}}</span>
-                        </div>
+                        <a :href="'#' + image.id">
+                            <img :src="image.url" alt="">
+                            <div class="user">
+                                <span>{{image.username}}</span>
+                            </div>
+                        </a>
                     </div>
                     <div class="image-text">
                         <div class="title">
@@ -52,13 +55,22 @@
                     </div>
 
                 </div>
+
+            </div>
+
+            <div class="load">
+                <button 
+                    @click="loadMore"
+                    v-if="hideLoadMoreButton == false"
+                >LOAD MORE</button>
             </div>
             
             <image-modal 
                 :id="currentImageId"
                 v-if="currentImageId"
-                @close="closeModal"
-                
+                @close="closeModal"  
+                @next="nextImage"          
+                @prev="prevImage"          
             ></image-modal>
             
         </div>
@@ -74,10 +86,12 @@
                     <i class="fas fa-times"></i>
                 </div>
                 <div class="imgModal">
+                    <div v-if="nextId" @click="nextImage" class="prev"><i class="fas fa-chevron-left"></i></div>
                     <img :src="url" alt="">
+                    <div v-if="prevId" @click="prevImage" class="next"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="txtModal">
-                    <div class="meta">| Uploaded by {{username}} on {{timeStamp}}</div>
+                    <div class="meta">| Uploaded by {{username}} on {{timeStamp}} <span v-for="tag in tags" class="tag">{{tag.tag}}</span></div>
                     <h3>{{title}} </h3>
                     <p>{{description}}</p>
                 </div>
@@ -89,8 +103,7 @@
 
                 <comments-modal
                     :id="id"
-                    :newComment="newComment"
-                    
+                    :newComment="newComment"                    
                 ></comments-modal>
 
             </div>

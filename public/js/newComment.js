@@ -8,7 +8,6 @@ Vue.component('new-comment-modal', {
             timeStamp: null
         };
     },
-    mounted: function() {},
     methods: {
         submit: function(e) {
             e.preventDefault();

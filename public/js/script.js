@@ -6,8 +6,10 @@
             title: '',
             description: '',
             username: '',
+            tags: null,
             file: null,
-            currentImageId: null
+            currentImageId: location.hash.slice(1),
+            hideLoadMoreButton: false
         },
         mounted: function() {
             var self = this;
@@ -19,6 +21,10 @@
                 .catch(function(err) {
                     console.log('Error in GET to /images: ', err);
                 });
+
+            addEventListener('hashchange', function() {
+                self.currentImageId = location.hash.slice(1);
+            });
         },
         methods: {
             handleClick: function(e) {
@@ -34,6 +40,7 @@
                     formData.append('title', this.title);
                     formData.append('description', this.description);
                     formData.append('username', this.username);
+                    formData.append('tags', this.tags);
                     formData.append('file', this.file);
 
                     axios
@@ -43,6 +50,7 @@
                             self.title = '';
                             self.description = '';
                             self.username = '';
+                            self.tags = null;
                             self.file = null;
                             spinner.classList.add('hide');
                             fileLabel.classList.remove('uploaded');
@@ -71,11 +79,42 @@
                     fileLabel.innerHTML = 'Choose file';
                 }
             },
-            openModal: function(imageId) {
-                this.currentImageId = imageId;
-            },
+            // openModal: function(imageId) {
+            //     this.currentImageId = imageId;
+            //     document.querySelector('body').classList.add('modal-open');
+            // },
             closeModal: function() {
                 this.currentImageId = null;
+                location.hash = null;
+                history.replaceState(null, null, ' ');
+                document.querySelector('body').classList.remove('modal-open');
+            },
+            nextImage: function(nextId) {
+                location.hash = nextId;
+            },
+            prevImage: function(prevId) {
+                location.hash = prevId;
+            },
+            loadMore: function() {
+                var self = this;
+                var lastImageId = self.images[self.images.length - 1].id;
+
+                axios
+                    .get('/moreImages', {
+                        params: {
+                            lastImageId
+                        }
+                    })
+                    .then(function(res) {
+                        self.images = self.images.concat(res.data);
+
+                        if (res.data[res.data.length - 1].lowestId === self.images[self.images.length - 1].id) {
+                            self.hideLoadMoreButton = true;
+                        }
+                    })
+                    .catch(function(err) {
+                        console.log('Error in GET /moreImages: ', err);
+                    });
             }
         }
     });

@@ -12,17 +12,70 @@ module.exports.getImages = () => {
     const q = `
         SELECT *
         FROM images
-        ORDER BY created_at DESC
+        ORDER BY id DESC
+        LIMIT 3
     `;
 
     return db.query(q);
 };
 
+module.exports.getMoreImages = startId => {
+    const q = `
+        SELECT id, url, username, title, description, (
+            SELECT id
+            FROM images
+            ORDER BY id ASC
+            LIMIT 1
+        ) AS "lowestId"
+        FROM images
+        WHERE id < $1
+        ORDER BY id DESC
+        LIMIT 3
+    `;
+    const params = [startId];
+
+    return db.query(q, params);
+};
+
 module.exports.getImage = imageId => {
     const q = `
-        SELECT *
+        SELECT *, (
+            SELECT id 
+            FROM images
+            WHERE id>$1
+            ORDER BY id ASC
+            LIMIT 1
+        ) AS "nextId", (
+            SELECT id 
+            FROM images
+            WHERE id<$1
+            ORDER BY id DESC
+            LIMIT 1
+        ) AS "prevId"
         FROM images
         WHERE id=$1
+    `;
+    const params = [imageId];
+
+    return db.query(q, params);
+};
+
+module.exports.addTag = (tag, imageId) => {
+    const q = `
+        INSERT INTO tags (tag, image_id)
+        VALUES ($1, $2)
+        RETURNING tag
+    `;
+    const params = [tag, imageId];
+
+    return db.query(q, params);
+};
+
+module.exports.getImageTags = imageId => {
+    const q = `
+        SELECT tag
+        FROM tags
+        WHERE image_id=$1
     `;
     const params = [imageId];
 
