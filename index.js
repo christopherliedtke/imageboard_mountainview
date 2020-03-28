@@ -49,6 +49,22 @@ app.get('/moreImages', (req, res) => {
         .catch(err => console.log('Error on getMoreImages() on /moreImages: ', err));
 });
 
+app.get('/imagesbytag', (req, res) => {
+    db.getImagesByTag(req.query.tag)
+        .then(payload => {
+            res.json(payload.rows);
+        })
+        .catch(err => console.log('Error on getImagesByTag() on /imagesbytag: ', err));
+});
+
+app.get('/moreImagesByTag', (req, res) => {
+    db.getMoreImagesByTag(req.query.tag, req.query.lastImageId)
+        .then(payload => {
+            res.json(payload.rows);
+        })
+        .catch(err => console.log('Error on getMoreImagesByTag() on /moreImagesByTag: ', err));
+});
+
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
     let url = conf.s3Url + req.file.filename;
 
@@ -58,7 +74,7 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
             imageObj.tags = [];
 
             req.body.tags.split(',').forEach(tag => {
-                db.addTag(tag.toLowerCase(), response.rows[0].id)
+                db.addTag(tag.toLowerCase().trim(), response.rows[0].id)
                     .then(responseTag => {
                         imageObj.tags.push(responseTag.rows[0]);
                     })
@@ -74,42 +90,54 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
 });
 
 app.get('/image', (req, res) => {
-    const id = req.query.id;
+    const id = parseInt(req.query.id, 10);
 
-    db.getImage(id)
-        .then(payload => {
-            res.json(payload.rows[0]);
-        })
-        .catch(err => {
-            console.log('Error on getImage() on /image: ', err);
-            res.sendStatus(500);
-        });
+    if (!isNaN(id)) {
+        db.getImage(id)
+            .then(payload => {
+                res.json(payload.rows[0]);
+            })
+            .catch(err => {
+                console.log('Error on getImage() on /image: ', err);
+                res.sendStatus(500);
+            });
+    } else {
+        res.sendStatus(204);
+    }
 });
 
 app.get('/comments', (req, res) => {
-    const id = req.query.id;
+    const id = parseInt(req.query.id, 10);
 
-    db.getComments(id)
-        .then(payload => {
-            res.json(payload.rows);
-        })
-        .catch(err => {
-            console.log('Error on getComments() on /image: ', err);
-            res.sendStatus(500);
-        });
+    if (!isNaN(id)) {
+        db.getComments(id)
+            .then(payload => {
+                res.json(payload.rows);
+            })
+            .catch(err => {
+                console.log('Error on getComments() on /image: ', err);
+                res.sendStatus(500);
+            });
+    } else {
+        res.sendStatus(204);
+    }
 });
 
 app.get('/tags', (req, res) => {
-    const id = req.query.imageId;
+    const id = parseInt(req.query.imageId, 10);
 
-    db.getImageTags(id)
-        .then(payload => {
-            res.json(payload.rows);
-        })
-        .catch(err => {
-            console.log('Error on getImageTags() on /tags: ', err);
-            res.sendStatus(500);
-        });
+    if (!isNaN(id)) {
+        db.getImageTags(id)
+            .then(payload => {
+                res.json(payload.rows);
+            })
+            .catch(err => {
+                console.log('Error on getImageTags() on /tags: ', err);
+                res.sendStatus(500);
+            });
+    } else {
+        res.sendStatus(204);
+    }
 });
 
 app.post('/addComment', (req, res) => {

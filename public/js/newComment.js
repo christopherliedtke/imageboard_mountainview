@@ -3,8 +3,8 @@ Vue.component('new-comment-modal', {
     props: ['id'],
     data: function() {
         return {
-            username: '',
-            comment: '',
+            username: null,
+            comment: null,
             timeStamp: null
         };
     },

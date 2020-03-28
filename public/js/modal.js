@@ -3,11 +3,11 @@ Vue.component('image-modal', {
     props: ['id'],
     data: function() {
         return {
-            title: '',
-            description: '',
-            username: '',
-            url: '',
-            timeStamp: '',
+            title: null,
+            description: null,
+            username: null,
+            url: null,
+            timeStamp: null,
             tags: null,
             prevId: null,
             nextId: null,
@@ -66,27 +66,6 @@ Vue.component('image-modal', {
                         console.log('Error in GET to /tags: ', err);
                     })
             ]);
-
-            axios
-                .get('/image?id=' + self.id)
-                .then(function(payload) {
-                    if (!payload.data) {
-                        self.$emit('close');
-                    } else {
-                        self.title = payload.data.title;
-                        self.description = payload.data.description;
-                        self.username = payload.data.username;
-                        self.url = payload.data.url;
-                        self.timeStamp = payload.data['created_at'].replace(/[a-zA-Z]/g, ' ').substring(0, 16);
-
-                        self.prevId = payload.data.prevId;
-                        self.nextId = payload.data.nextId;
-                    }
-                })
-                .catch(function(err) {
-                    self.$emit('close');
-                    console.log('Error in GET to /image: ', err);
-                });
         },
         nextImage: function() {
             this.$emit('next', this.nextId);

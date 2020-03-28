@@ -35,6 +35,10 @@
                 </form>
             </div>
 
+            <div v-if="currentTag" class="tag-container">
+                <h1>Images for <span class="tag"><i class="fas fa-tag fa-xs"></i> {{currentTag}} </span><i @click="removeCurrentTag" class="fas fa-times close"></i></h1>
+            </div>
+
             <div class="container" v-if="images.length > 0">
                 <div v-for="image in images" class="card">
                     <div class="img">
@@ -70,7 +74,7 @@
                 v-if="currentImageId"
                 @close="closeModal"  
                 @next="nextImage"          
-                @prev="prevImage"          
+                @prev="prevImage"         
             ></image-modal>
             
         </div>
@@ -91,7 +95,7 @@
                     <div v-if="prevId" @click="prevImage" class="next"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="txtModal">
-                    <div class="meta">| Uploaded by {{username}} on {{timeStamp}} <span v-for="tag in tags" class="tag">{{tag.tag}}</span></div>
+                    <div class="meta">| Uploaded by {{username}} on {{timeStamp}} <a v-for="tag in tags" :href="'#' + tag.tag"><span class="tag">{{tag.tag}}</span></a> </div>
                     <h3>{{title}} </h3>
                     <p>{{description}}</p>
                 </div>

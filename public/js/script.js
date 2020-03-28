@@ -3,28 +3,26 @@
         el: '#main',
         data: {
             images: [],
-            title: '',
-            description: '',
-            username: '',
+            title: null,
+            description: null,
+            username: null,
             tags: null,
             file: null,
-            currentImageId: location.hash.slice(1),
+            currentImageId: null,
+            currentTag: null,
             hideLoadMoreButton: false
         },
         mounted: function() {
-            var self = this;
-            axios
-                .get('/images')
-                .then(function(payload) {
-                    self.images = payload.data;
-                })
-                .catch(function(err) {
-                    console.log('Error in GET to /images: ', err);
-                });
-
-            addEventListener('hashchange', function() {
-                self.currentImageId = location.hash.slice(1);
-            });
+            if (!isNaN(parseInt(location.hash.slice(1), 10))) {
+                this.currentImageId = location.hash.slice(1);
+                this.getImages();
+            } else if (location.hash) {
+                this.currentTag = location.hash.slice(1);
+                this.currentImageId = null;
+                this.getImagesByTag();
+            } else {
+                this.getImages();
+            }
         },
         methods: {
             handleClick: function(e) {
@@ -79,14 +77,14 @@
                     fileLabel.innerHTML = 'Choose file';
                 }
             },
-            // openModal: function(imageId) {
-            //     this.currentImageId = imageId;
-            //     document.querySelector('body').classList.add('modal-open');
-            // },
             closeModal: function() {
+                location.hash = this.currentTag || '';
                 this.currentImageId = null;
-                location.hash = null;
-                history.replaceState(null, null, ' ');
+
+                if (!location.hash) {
+                    history.replaceState(null, null, ' ');
+                }
+
                 document.querySelector('body').classList.remove('modal-open');
             },
             nextImage: function(nextId) {
@@ -95,16 +93,58 @@
             prevImage: function(prevId) {
                 location.hash = prevId;
             },
-            loadMore: function() {
+            getImages: function() {
                 var self = this;
-                var lastImageId = self.images[self.images.length - 1].id;
 
                 axios
-                    .get('/moreImages', {
+                    .get('/images')
+                    .then(function(payload) {
+                        self.images = payload.data;
+                    })
+                    .catch(function(err) {
+                        console.log('Error in GET to /images: ', err);
+                    });
+
+                addEventListener('hashchange', function() {
+                    if (!isNaN(parseInt(location.hash.slice(1), 10))) {
+                        self.currentImageId = location.hash.slice(1);
+                    } else if (location.hash) {
+                        self.currentTag = location.hash.slice(1);
+                        self.currentImageId = null;
+                        self.getImagesByTag();
+                        self.hideLoadMoreButton = false;
+                    } else {
+                        self.getImages();
+                        self.hideLoadMoreButton = false;
+                    }
+                });
+            },
+            loadMore: function() {
+                var self = this;
+
+                var lastImageId = self.images[self.images.length - 1].id;
+                var reqUrl = '';
+                var reqParams = {};
+
+                if (self.currentTag) {
+                    reqUrl = '/moreImagesByTag';
+                    reqParams = {
+                        params: {
+                            tag: self.currentTag,
+                            lastImageId
+                        }
+                    };
+                } else {
+                    reqUrl = '/moreImages';
+                    reqParams = {
                         params: {
                             lastImageId
                         }
-                    })
+                    };
+                }
+
+                axios
+                    .get(reqUrl, reqParams)
                     .then(function(res) {
                         self.images = self.images.concat(res.data);
 
@@ -113,8 +153,44 @@
                         }
                     })
                     .catch(function(err) {
-                        console.log('Error in GET /moreImages: ', err);
+                        console.log('Error in GET', reqUrl, err);
                     });
+            },
+            getImagesByTag: function() {
+                var self = this;
+
+                axios
+                    .get('/imagesbytag', {
+                        params: {
+                            tag: self.currentTag
+                        }
+                    })
+                    .then(function(payload) {
+                        self.images = payload.data;
+                        if (payload.data[payload.data.length - 1].lowestId === self.images[self.images.length - 1].id) {
+                            self.hideLoadMoreButton = true;
+                        }
+                    })
+                    .catch(function(err) {
+                        console.log('Error in GET to /images: ', err);
+                    });
+
+                addEventListener('hashchange', function() {
+                    if (!isNaN(parseInt(location.hash.slice(1), 10))) {
+                        self.currentImageId = location.hash.slice(1);
+                    } else if (location.hash) {
+                        self.currentTag = location.hash.slice(1);
+                        self.currentImageId = null;
+                        self.getImagesByTag();
+                    } else {
+                        self.getImages();
+                    }
+                });
+            },
+            removeCurrentTag: function() {
+                this.currentTag = null;
+                location.hash = null;
+                history.replaceState(null, null, ' ');
             }
         }
     });
