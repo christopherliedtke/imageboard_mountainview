@@ -49,7 +49,7 @@ app.get('/moreImages', (req, res) => {
         .catch(err => console.log('Error on getMoreImages() on /moreImages: ', err));
 });
 
-app.get('/imagesbytag', (req, res) => {
+app.get('/imagesByTag', (req, res) => {
     db.getImagesByTag(req.query.tag)
         .then(payload => {
             res.json(payload.rows);

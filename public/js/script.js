@@ -23,6 +23,26 @@
             } else {
                 this.getImages();
             }
+
+            var self = this;
+            addEventListener('hashchange', function() {
+                if (!isNaN(parseInt(location.hash.slice(1), 10))) {
+                    self.currentImageId = location.hash.slice(1);
+                } else if (location.hash) {
+                    self.currentImageId = null;
+                    self.hideLoadMoreButton = false; // !to be checked
+
+                    var oldCurrentTag = self.currentTag;
+                    self.currentTag = location.hash.slice(1);
+                    if (oldCurrentTag != self.currentTag) {
+                        self.getImagesByTag();
+                    }
+                } else if (self.currentTag === 'deleteTag') {
+                    self.currentTag = null;
+                    self.hideLoadMoreButton = false;
+                    self.getImages();
+                }
+            });
         },
         methods: {
             handleClick: function(e) {
@@ -44,7 +64,10 @@
                     axios
                         .post('/upload', formData)
                         .then(function(res) {
-                            self.images.unshift(res.data);
+                            if (!self.currentTag || self.tags.includes(self.currentTag)) {
+                                self.images.unshift(res.data);
+                            }
+
                             self.title = '';
                             self.description = '';
                             self.username = '';
@@ -104,43 +127,21 @@
                     .catch(function(err) {
                         console.log('Error in GET to /images: ', err);
                     });
-
-                addEventListener('hashchange', function() {
-                    if (!isNaN(parseInt(location.hash.slice(1), 10))) {
-                        self.currentImageId = location.hash.slice(1);
-                    } else if (location.hash) {
-                        self.currentTag = location.hash.slice(1);
-                        self.currentImageId = null;
-                        self.getImagesByTag();
-                        self.hideLoadMoreButton = false;
-                    } else {
-                        self.getImages();
-                        self.hideLoadMoreButton = false;
-                    }
-                });
             },
             loadMore: function() {
                 var self = this;
-
-                var lastImageId = self.images[self.images.length - 1].id;
                 var reqUrl = '';
-                var reqParams = {};
+                var reqParams = {
+                    params: {
+                        lastImageId: self.images[self.images.length - 1].id
+                    }
+                };
 
                 if (self.currentTag) {
                     reqUrl = '/moreImagesByTag';
-                    reqParams = {
-                        params: {
-                            tag: self.currentTag,
-                            lastImageId
-                        }
-                    };
+                    reqParams.params.tag = self.currentTag;
                 } else {
                     reqUrl = '/moreImages';
-                    reqParams = {
-                        params: {
-                            lastImageId
-                        }
-                    };
                 }
 
                 axios
@@ -160,7 +161,7 @@
                 var self = this;
 
                 axios
-                    .get('/imagesbytag', {
+                    .get('/imagesByTag', {
                         params: {
                             tag: self.currentTag
                         }
@@ -174,21 +175,9 @@
                     .catch(function(err) {
                         console.log('Error in GET to /images: ', err);
                     });
-
-                addEventListener('hashchange', function() {
-                    if (!isNaN(parseInt(location.hash.slice(1), 10))) {
-                        self.currentImageId = location.hash.slice(1);
-                    } else if (location.hash) {
-                        self.currentTag = location.hash.slice(1);
-                        self.currentImageId = null;
-                        self.getImagesByTag();
-                    } else {
-                        self.getImages();
-                    }
-                });
             },
             removeCurrentTag: function() {
-                this.currentTag = null;
+                this.currentTag = 'deleteTag';
                 location.hash = null;
                 history.replaceState(null, null, ' ');
             }

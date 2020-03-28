@@ -13,7 +13,7 @@ module.exports.getImages = () => {
         SELECT *
         FROM images
         ORDER BY id DESC
-        LIMIT 9
+        LIMIT 6
     `;
 
     return db.query(q);
@@ -30,7 +30,7 @@ module.exports.getMoreImages = startId => {
         FROM images
         WHERE id < $1
         ORDER BY id DESC
-        LIMIT 9
+        LIMIT 6
     `;
     const params = [startId];
 
@@ -51,7 +51,7 @@ module.exports.getImagesByTag = tag => {
         ON images.id=tags.image_id
         WHERE tags.tag = $1
         ORDER BY images.id DESC
-        LIMIT 6
+        LIMIT 1
     `;
     const params = [tag];
 
@@ -72,7 +72,7 @@ module.exports.getMoreImagesByTag = (tag, startId) => {
         ON images.id=tags.image_id
         WHERE tags.tag = $1 AND images.id < $2
         ORDER BY tags.image_id DESC
-        LIMIT 6
+        LIMIT 1
     `;
     const params = [tag, startId];
 

@@ -10,12 +10,12 @@ CREATE TABLE comments(
 
 INSERT INTO comments (username, comment, image_id) VALUES (
     'kmauri',
-    'Awesome Pic!!!',
-    10
+    'Awesome Pic!!! I want to go there <3',
+    2
 );
 
 INSERT INTO comments (username, comment, image_id) VALUES (
     'teichelt',
-    'Who is that guy? :-)',
-    10
+    'Nice atmosphere! Who is that guy? :D',
+    1
 );
