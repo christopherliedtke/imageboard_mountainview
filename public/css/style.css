@@ -393,6 +393,38 @@ footer {
     margin-top: 10px;
 }
 
+.new-image-indicator {
+    position: fixed;
+    right: 5vh;
+    bottom: 5vh;
+    z-index: 1000;
+    height: 80px;
+    width: 80px;
+    background-color: var(--main-brand);
+    color: var(--light-shade);
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px 2px rgba(25, 25, 25, 0.2);
+    font-weight: 600;
+    font-size: 1em;
+    text-align: center;
+}
+
+.new-image-indicator:hover {
+    background-color: var(--dark-accent);
+}
+
+.new-image-indicator i {
+    position: absolute;
+    font-size: 3em;
+    opacity: 0.2;
+}
+
 /* #Scrollbar */
 .modal-content::-webkit-scrollbar,
 body::-webkit-scrollbar {

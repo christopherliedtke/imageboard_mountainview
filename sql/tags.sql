@@ -46,3 +46,39 @@ INSERT INTO tags (image_id, tag) VALUES (
     3,
     'usa'
 );
+
+
+INSERT INTO tags (image_id, tag) VALUES (
+    4,
+    'switzerland'
+);
+
+INSERT INTO tags (image_id, tag) VALUES (
+    4,
+    'snow'
+);
+
+INSERT INTO tags (image_id, tag) VALUES (
+    5,
+    'italy'
+);
+
+INSERT INTO tags (image_id, tag) VALUES (
+    5,
+    'lake'
+);
+
+INSERT INTO tags (image_id, tag) VALUES (
+    6,
+    'new_zealand'
+);
+
+INSERT INTO tags (image_id, tag) VALUES (
+    6,
+    'lake'
+);
+
+INSERT INTO tags (image_id, tag) VALUES (
+    6,
+    'snow'
+);

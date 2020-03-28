@@ -10,10 +10,15 @@ if (process.env.DATABASE_URL) {
 
 module.exports.getImages = () => {
     const q = `
-        SELECT *
+        SELECT id, url, username, title, description, (
+            SELECT id
+            FROM images
+            ORDER BY id ASC
+            LIMIT 1
+        ) AS "lowestId"
         FROM images
         ORDER BY id DESC
-        LIMIT 6
+        LIMIT 9
     `;
 
     return db.query(q);
@@ -30,7 +35,7 @@ module.exports.getMoreImages = startId => {
         FROM images
         WHERE id < $1
         ORDER BY id DESC
-        LIMIT 6
+        LIMIT 9
     `;
     const params = [startId];
 
@@ -51,7 +56,7 @@ module.exports.getImagesByTag = tag => {
         ON images.id=tags.image_id
         WHERE tags.tag = $1
         ORDER BY images.id DESC
-        LIMIT 1
+        LIMIT 6
     `;
     const params = [tag];
 
@@ -62,8 +67,9 @@ module.exports.getMoreImagesByTag = (tag, startId) => {
     const q = `
 
         SELECT  images.id, images.url, images.username, images.title, images.description, images.created_at, (
-            SELECT id
+            SELECT image_id
             FROM tags
+            WHERE tag = $1
             ORDER BY id ASC
             LIMIT 1
         ) AS "lowestId"
@@ -72,7 +78,7 @@ module.exports.getMoreImagesByTag = (tag, startId) => {
         ON images.id=tags.image_id
         WHERE tags.tag = $1 AND images.id < $2
         ORDER BY tags.image_id DESC
-        LIMIT 1
+        LIMIT 6
     `;
     const params = [tag, startId];
 
@@ -155,4 +161,15 @@ module.exports.addComment = (comment, username, imageId) => {
     const params = [comment, username, imageId];
 
     return db.query(q, params);
+};
+
+module.exports.getHighestImageId = () => {
+    const q = `
+        SELECT id
+        FROM images
+        ORDER BY id DESC
+        LIMIT 1
+    `;
+
+    return db.query(q);
 };

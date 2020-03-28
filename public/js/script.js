@@ -3,14 +3,17 @@
         el: '#main',
         data: {
             images: [],
-            title: null,
-            description: null,
-            username: null,
-            tags: null,
+            title: '',
+            description: '',
+            username: '',
+            tags: '',
             file: null,
             currentImageId: null,
             currentTag: null,
-            hideLoadMoreButton: false
+            deleteTag: false,
+            hideLoadMoreButton: false,
+            newImage: false,
+            checkTimeoutId: null
         },
         mounted: function() {
             if (!isNaN(parseInt(location.hash.slice(1), 10))) {
@@ -27,8 +30,10 @@
             var self = this;
             addEventListener('hashchange', function() {
                 if (!isNaN(parseInt(location.hash.slice(1), 10))) {
+                    clearTimeout(this.checkTimeoutId);
                     self.currentImageId = location.hash.slice(1);
                 } else if (location.hash) {
+                    clearTimeout(this.checkTimeoutId);
                     self.currentImageId = null;
                     self.hideLoadMoreButton = false; // !to be checked
 
@@ -37,7 +42,7 @@
                     if (oldCurrentTag != self.currentTag) {
                         self.getImagesByTag();
                     }
-                } else if (self.currentTag === 'deleteTag') {
+                } else if (self.deleteTag === true) {
                     self.currentTag = null;
                     self.hideLoadMoreButton = false;
                     self.getImages();
@@ -66,15 +71,16 @@
                         .then(function(res) {
                             if (!self.currentTag || self.tags.includes(self.currentTag)) {
                                 self.images.unshift(res.data);
+                                self.newImage = false;
                             }
 
                             self.title = '';
                             self.description = '';
                             self.username = '';
-                            self.tags = null;
+                            self.tags = '';
                             self.file = null;
                             spinner.classList.add('hide');
-                            fileLabel.classList.remove('uploaded');
+                            fileLabel.classList.remove('uploaded', 'error');
                             fileLabel.innerHTML = 'Choose file';
                         })
                         .catch(function(err) {
@@ -123,6 +129,13 @@
                     .get('/images')
                     .then(function(payload) {
                         self.images = payload.data;
+                        self.newImage = false;
+
+                        if (payload.data[payload.data.length - 1].lowestId === self.images[self.images.length - 1].id) {
+                            self.hideLoadMoreButton = true;
+                        }
+
+                        setTimeout(self.checkForNewImages, 10000);
                     })
                     .catch(function(err) {
                         console.log('Error in GET to /images: ', err);
@@ -177,9 +190,37 @@
                     });
             },
             removeCurrentTag: function() {
-                this.currentTag = 'deleteTag';
+                this.currentTag = null;
+                this.deleteTag = true;
                 location.hash = null;
                 history.replaceState(null, null, ' ');
+            },
+            reloadImages: function() {
+                this.getImages();
+                clearTimeout(this.checkTimeoutId);
+            },
+            checkForNewImages: function() {
+                var self = this;
+                var newestImageId = self.images[0].id;
+
+                self.checkTimeoutId = setTimeout(() => {
+                    console.log('check for new image running...');
+
+                    axios
+                        .get('/getHighestImageId')
+                        .then(function(response) {
+                            if (response.data.id != newestImageId) {
+                                self.newImage = true;
+                            } else {
+                                self.newImage = false;
+                            }
+
+                            self.checkForNewImages();
+                        })
+                        .catch(function(err) {
+                            console.log('Error in GET to /getHighestImageId: ', err);
+                        });
+                }, 5000);
             }
         }
     });

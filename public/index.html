@@ -44,7 +44,7 @@
                     <div class="img">
                         <a :href="'#' + image.id">
                             <img :src="image.url" alt="">
-                            <div class="user">
+                            <div v-if="image.username" class="user">
                                 <span>{{image.username}}</span>
                             </div>
                         </a>
@@ -77,6 +77,11 @@
                 @prev="prevImage"         
             ></image-modal>
             
+            <div class="new-image-indicator" v-if="newImage && !currentTag" @click="reloadImages">
+                <span>UPDATE</span>
+                <i class="fas fa-spinner fa-pulse"></i>
+            </div>
+            
         </div>
 
     </main>
@@ -95,7 +100,7 @@
                     <div v-if="prevId" @click="prevImage" class="next"><i class="fas fa-chevron-right"></i></div>
                 </div>
                 <div class="txtModal">
-                    <div class="meta">| Uploaded by {{username}} on {{timeStamp}} <a v-for="tag in tags" :href="'#' + tag.tag"><span class="tag">{{tag.tag}}</span></a> </div>
+                    <div class="meta">| Uploaded<span v-if="username"> by {{username}}</span> on {{timeStamp}} <a v-for="tag in tags" :href="'#' + tag.tag"><span class="tag">{{tag.tag}}</span></a> </div>
                     <h3>{{title}} </h3>
                     <p>{{description}}</p>
                 </div>

@@ -71,17 +71,26 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
     db.addImage(req.body.title, req.body.username, req.body.description, url)
         .then(response => {
             const imageObj = { ...response.rows[0] };
-            imageObj.tags = [];
 
-            req.body.tags.split(',').forEach(tag => {
-                db.addTag(tag.toLowerCase().trim(), response.rows[0].id)
-                    .then(responseTag => {
-                        imageObj.tags.push(responseTag.rows[0]);
-                    })
-                    .catch(err => console.log('Error on addTag() on /upload: ', err));
-            });
-
-            res.json(imageObj);
+            if (req.body.tags) {
+                imageObj.tags = [];
+                req.body.tags.split(',').forEach(tag => {
+                    db.addTag(
+                        tag
+                            .toLowerCase()
+                            .trim()
+                            .replace(' ', '_'),
+                        response.rows[0].id
+                    )
+                        .then(responseTag => {
+                            imageObj.tags.push(responseTag.rows[0]);
+                            res.json(imageObj);
+                        })
+                        .catch(err => console.log('Error on addTag() on /upload: ', err));
+                });
+            } else {
+                res.json(imageObj);
+            }
         })
         .catch(err => {
             console.log('Error on addImage() on /upload: ', err);
@@ -147,6 +156,18 @@ app.post('/addComment', (req, res) => {
         })
         .catch(err => {
             console.log('Error on addComment() on /addComment: ', err);
+            res.sendStatus(500);
+        });
+});
+
+app.get('/getHighestImageId', (req, res) => {
+    //
+    db.getHighestImageId()
+        .then(response => {
+            res.json(response.rows[0]);
+        })
+        .catch(err => {
+            console.log('Error on getHighestImageId() on /getHighestImageId: ', err);
             res.sendStatus(500);
         });
 });
