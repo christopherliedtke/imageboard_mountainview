@@ -65,7 +65,6 @@ module.exports.getImagesByTag = tag => {
 
 module.exports.getMoreImagesByTag = (tag, startId) => {
     const q = `
-
         SELECT  images.id, images.url, images.username, images.title, images.description, images.created_at, (
             SELECT image_id
             FROM tags
@@ -84,6 +83,44 @@ module.exports.getMoreImagesByTag = (tag, startId) => {
 
     return db.query(q, params);
 };
+
+// module.exports.getImagesBySearchterm = searchTerm => {
+//     const q = `
+//         SELECT id, url, username, title, description, (
+//             SELECT id
+//             FROM images
+//             WHERE title LIKE $1 OR description LIKE $1 OR username LIKE $1
+//             ORDER BY id ASC
+//             LIMIT 1
+//         ) AS "lowestId"
+//         FROM images
+//         WHERE title LIKE $1 OR description LIKE $1 OR username LIKE $1
+//         ORDER BY id DESC
+//         LIMIT 6
+//     `;
+//     const params = [searchTerm];
+
+//     return db.query(q, params);
+// };
+
+// module.exports.getMoreImagesBySearchterm = (startId, searchTerm) => {
+//     const q = `
+//         SELECT id, url, username, title, description, (
+//             SELECT id
+//             FROM images
+//             WHERE title LIKE '%$2%' OR description LIKE '%$2%' OR username LIKE '%$2%'
+//             ORDER BY id ASC
+//             LIMIT 1
+//         ) AS "lowestId"
+//         FROM images
+//         WHERE id < $1 AND (title LIKE '%$2%' OR description LIKE '%$2%' OR username LIKE '%$2%')
+//         ORDER BY id DESC
+//         LIMIT 6
+//     `;
+//     const params = [startId, searchTerm];
+
+//     return db.query(q, params);
+// };
 
 module.exports.getImage = imageId => {
     const q = `

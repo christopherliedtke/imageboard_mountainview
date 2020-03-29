@@ -65,6 +65,20 @@ app.get('/moreImagesByTag', (req, res) => {
         .catch(err => console.log('Error on getMoreImagesByTag() on /moreImagesByTag: ', err));
 });
 
+// app.get('/imagesBySearchterm', (req, res) => {
+//     console.log('req.query.q: ', req.query.q);
+//     let searchTerm = '%' + req.query.q + '%';
+//     console.log('searchTerm: ', searchTerm);
+
+//     db.getImagesBySearchterm(searchTerm)
+//         .then(payload => {
+//             console.log('payload.rows: ', payload.rows);
+
+//             res.json(payload.rows);
+//         })
+//         .catch(err => console.log('Error on getImagesBySearchterm() on /imagesBySearchterm: ', err));
+// });
+
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
     let url = conf.s3Url + req.file.filename;
 
@@ -84,13 +98,12 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
                     )
                         .then(responseTag => {
                             imageObj.tags.push(responseTag.rows[0]);
-                            res.json(imageObj);
                         })
                         .catch(err => console.log('Error on addTag() on /upload: ', err));
                 });
-            } else {
-                res.json(imageObj);
             }
+
+            res.json(imageObj);
         })
         .catch(err => {
             console.log('Error on addImage() on /upload: ', err);

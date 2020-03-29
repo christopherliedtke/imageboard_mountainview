@@ -35,6 +35,16 @@
                 </form>
             </div>
 
+            <!-- <div v-if="!currentTag" class="search">
+                <form>
+                    <div class="searchbar">
+                        <i @click="" class="fas fa-times close"></i>
+                        <input v-model='searchTerm' type="text" name="searchterm" placeholder="search...">
+                        <button @click='search'><i class="fas fa-search"></i></i></button>
+                    </div>
+                </form>
+            </div> -->
+
             <div v-if="currentTag" class="tag-container">
                 <h1>Images for <span class="tag"><i class="fas fa-tag fa-xs"></i> {{currentTag}} </span><i @click="removeCurrentTag" class="fas fa-times close"></i></h1>
             </div>

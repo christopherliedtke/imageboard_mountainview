@@ -13,6 +13,7 @@
             deleteTag: false,
             hideLoadMoreButton: false,
             newImage: false,
+            // searchTerm: '',
             checkTimeoutId: null
         },
         mounted: function() {
@@ -71,7 +72,6 @@
                         .then(function(res) {
                             if (!self.currentTag || self.tags.includes(self.currentTag)) {
                                 self.images.unshift(res.data);
-                                self.newImage = false;
                             }
 
                             self.title = '';
@@ -79,6 +79,7 @@
                             self.username = '';
                             self.tags = '';
                             self.file = null;
+                            self.newImage = false;
                             spinner.classList.add('hide');
                             fileLabel.classList.remove('uploaded', 'error');
                             fileLabel.innerHTML = 'Choose file';
@@ -222,6 +223,29 @@
                         });
                 }, 5000);
             }
+            // search: function() {
+            //     //
+            //     var self = this;
+
+            //     axios
+            //         .get('/imagesBySearchterm', {
+            //             params: {
+            //                 q: self.searchTerm
+            //             }
+            //         })
+            //         .then(function(payload) {
+            //             alert('test');
+            //             self.images = payload.data;
+            //             console.log('self.images: ', self.images);
+
+            //             if (payload.data[payload.data.length - 1].lowestId === self.images[self.images.length - 1].id) {
+            //                 self.hideLoadMoreButton = true;
+            //             }
+            //         })
+            //         .catch(function(err) {
+            //             console.log('Error in GET to /imagesBySearchterm: ', err);
+            //         });
+            // }
         }
     });
 })();

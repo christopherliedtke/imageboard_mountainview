@@ -163,7 +163,7 @@ input[name='comment'] {
 .upload {
     display: flex;
     justify-content: center;
-    margin: 30px 10px 50px 10px;
+    margin: 30px 10px;
 }
 
 .upload form {
@@ -171,6 +171,35 @@ input[name='comment'] {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.search {
+    margin-bottom: 30px;
+}
+
+.searchbar {
+    display: flex;
+    justify-content: center;
+}
+
+.searchbar i.close {
+    font-size: 1em;
+    cursor: pointer;
+    align-self: center;
+    margin-right: 5px;
+}
+
+.searchbar input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+    width: 250px;
+}
+
+.searchbar button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
 }
 
 .tag-container {
