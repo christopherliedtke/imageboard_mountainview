@@ -6,7 +6,7 @@ This imageboard project includes a website showing all images that have been upl
 
 On click on an image a modal will open, showing all available information on the image including comments that have been made. Additional comments to the image can be made through the modal and are rendered automatically after submission. On the modal the user can navigate to the next or previous image through click on indicators. The individual indicators disappear in case there is no next/previous image.
 
-In the image modal the user can click on am image tag (in case one has been provided). This triggers the closing of the modal and the rendering of the newest 6 images matching the same tag. A 'load-more' button shows up in case there are more matching images available. A dedicated 'remove-tag' button brings the use back to the initial image overview.
+In the image modal the user can click on an image tag (in case one has been provided). This triggers the closing of the modal and the rendering of the newest 6 images matching the same tag. A 'load-more' button shows up in case there are more matching images available. A dedicated 'remove-tag' button brings the use back to the initial image overview.
 
 Links to individual images or tags can be shared as the particular data is stored in the `location.hash` thus shows up in the url.
 
@@ -32,6 +32,12 @@ Links to individual images or tags can be shared as the particular data is store
 -   Postgre SQL
 -   AWS S3, IAM
 
-![alt text](public/freeOrcasPetition.gif 'Petition - Free ORCAS')
+## Demo
+
+![alt text](public/montainView_load_comment2.gif 'Image overview | Load more | Comment')
+
+![alt text](public/montainView_viewTag2.gif 'Image by tag')
+
+![alt text](public/montainView_addImage2.gif 'Add image')
 
 [Link to Live App - disabled](#)
