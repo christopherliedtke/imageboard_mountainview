@@ -34,10 +34,16 @@ Links to individual images or tags can be shared as the particular data is store
 
 ## Demo
 
+<!-- [Link to Live App - disabled](#) -->
+
+#### Image Overview | Load More | Commenting
+
 ![alt text](public/montainView_load_comment2.gif 'Image overview | Load more | Comment')
+
+#### View Image by Tag
 
 ![alt text](public/montainView_viewTag2.gif 'Image by tag')
 
-![alt text](public/montainView_addImage2.gif 'Add image')
+#### Add Image
 
-[Link to Live App - disabled](#)
+![alt text](public/montainView_addImage2.gif 'Add image')

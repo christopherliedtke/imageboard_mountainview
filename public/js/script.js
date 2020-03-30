@@ -59,6 +59,7 @@
 
                 if (this.file) {
                     spinner.classList.remove('hide');
+                    clearTimeout(this.checkTimeoutId);
 
                     var formData = new FormData();
                     formData.append('title', this.title);
@@ -83,6 +84,8 @@
                             spinner.classList.add('hide');
                             fileLabel.classList.remove('uploaded', 'error');
                             fileLabel.innerHTML = 'Choose file';
+
+                            setTimeout(self.checkForNewImages, 10000);
                         })
                         .catch(function(err) {
                             console.log('Error in POST /upload: ', err);
@@ -205,8 +208,6 @@
                 var newestImageId = self.images[0].id;
 
                 self.checkTimeoutId = setTimeout(() => {
-                    console.log('check for new image running...');
-
                     axios
                         .get('/getHighestImageId')
                         .then(function(response) {
@@ -224,7 +225,6 @@
                 }, 5000);
             }
             // search: function() {
-            //     //
             //     var self = this;
 
             //     axios
