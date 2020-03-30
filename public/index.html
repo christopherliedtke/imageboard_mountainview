@@ -50,7 +50,7 @@
             </div>
 
             <div class="container" v-if="images.length > 0">
-                <div v-for="image in images" class="card">
+                <div v-for="image in images" :key="image.id" class="card">
                     <div class="img">
                         <a :href="'#' + image.id">
                             <img :src="image.url" alt="">
@@ -132,7 +132,7 @@
     <script id="comments" type="text/x-template">
         <div class="comments-container">
             <h3>COMMENTS</h3>
-            <div v-for="comment in comments" class="comment-container">
+            <div v-for="comment in comments" :key="comment.id" class="comment-container">
                 <div class="comment">{{comment.comment}}</div>
                 <div class="meta">By {{comment.username}} on {{comment['created_at']}}</div>
             </div>
